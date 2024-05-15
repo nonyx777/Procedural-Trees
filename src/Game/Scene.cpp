@@ -4,7 +4,7 @@ Scene *Scene::instance = nullptr;
 
 Scene::Scene()
 {
-    branch(sf::Vector2f(GLOBAL::window_width/2.f, GLOBAL::window_height), 100.f, 30.f, -120.f);
+    branch(sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height), 100.f, 30.f, -120.f);
 }
 
 Scene::~Scene()
@@ -38,13 +38,30 @@ void Scene::branch(sf::Vector2f base, float length, float angle, float parent_an
     branches.push_back(root);
 
     length *= 0.66f;
+    angle = randomAngle();
 
     if (length > 2.f)
     {
         parent_angle = Math::_atan2(root.direction.y - root.base.y, root.direction.x - root.base.x);
-        //right branch
+        // right branch
         branch(root.direction, length, angle, parent_angle);
-        //left branch
+        // left branch
         branch(root.direction, length, -angle, parent_angle);
     }
+}
+
+int Scene::randomAngle()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(30, 60);
+    return dis(gen);
+}
+
+int Scene::randomNumberBranch()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(1, 4);
+    return dis(gen);
 }
