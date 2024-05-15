@@ -4,10 +4,7 @@ Scene *Scene::instance = nullptr;
 
 Scene::Scene()
 {
-    if (GLOBAL::display_grid)
-    {
-        configureGrid(GLOBAL::cell_size, &this->grid);
-    }
+    branch(sf::Vector2f(GLOBAL::window_width/2.f, GLOBAL::window_height), 100.f, 30.f, -120.f);
 }
 
 Scene::~Scene()
@@ -29,14 +26,25 @@ void Scene::update(float dt)
 
 void Scene::render(sf::RenderTarget *target)
 {
-    if (this->grid.size() > 0)
+    for (Line &b : branches)
+        b.render(target);
+}
+
+void Scene::branch(sf::Vector2f base, float length, float angle, float parent_angle)
+{
+    sf::Vector2f direction = sf::Vector2f(Math::_cos(parent_angle + angle), Math::_sin(parent_angle + angle)) * length;
+    direction = base + direction;
+    Line root = Line(base, direction);
+    branches.push_back(root);
+
+    length *= 0.66f;
+
+    if (length > 2.f)
     {
-        for (uint i = 0; i < grid.size(); i++)
-        {
-            for (uint j = 0; j < grid[i].size(); j++)
-            {
-                target->draw(grid[i][j].property);
-            }
-        }
+        parent_angle = Math::_atan2(root.direction.y - root.base.y, root.direction.x - root.base.x);
+        //right branch
+        branch(root.direction, length, angle, parent_angle);
+        //left branch
+        branch(root.direction, length, -angle, parent_angle);
     }
 }
