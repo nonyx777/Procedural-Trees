@@ -14,7 +14,7 @@ private:
     static Scene *instance;
     std::vector<std::vector<Box>> grid;
     std::vector<Line> branches;
-    float angle = 45.f;
+    std::vector<Circle> leafs;
 
 private:
     Scene();

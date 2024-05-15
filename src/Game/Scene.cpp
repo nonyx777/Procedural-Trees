@@ -28,6 +28,8 @@ void Scene::render(sf::RenderTarget *target)
 {
     for (Line &b : branches)
         b.render(target);
+    for (Circle &l : leafs)
+        l.render(target);
 }
 
 void Scene::branch(sf::Vector2f base, float length, float angle, float parent_angle)
@@ -37,7 +39,7 @@ void Scene::branch(sf::Vector2f base, float length, float angle, float parent_an
     Line root = Line(base, direction);
     branches.push_back(root);
 
-    length *= 0.66f;
+    length *= 0.75f;
     angle = randomAngle();
 
     if (length > 2.f)
@@ -48,13 +50,17 @@ void Scene::branch(sf::Vector2f base, float length, float angle, float parent_an
         // left branch
         branch(root.direction, length, -angle, parent_angle);
     }
+
+    Circle leaf = Circle(1.f, root.direction);
+    leaf.property.setFillColor(sf::Color::Green);
+    leafs.push_back(leaf);
 }
 
 int Scene::randomAngle()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(30, 60);
+    std::uniform_int_distribution<> dis(10, 60);
     return dis(gen);
 }
 
