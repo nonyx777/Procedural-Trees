@@ -32,6 +32,8 @@ public:
     void branch(sf::Vector2f base, float length, float angle, float parent_angle, int parent_index);
     int randomAngle();
     int randomNumberBranch();
+    void stickBranchToParent();
+    void stickLeafToBranch();
 
     void update(float dt) override;
     void update(sf::Vector2f &vec, float dt);

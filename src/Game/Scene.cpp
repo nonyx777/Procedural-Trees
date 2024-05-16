@@ -22,10 +22,8 @@ Scene *Scene::getInstance()
 
 void Scene::update(float dt)
 {
-    for (int i = 1; i < branches.size() - 1; i++)
-    {
-        branches[i].base = branches[branches[i].parent_index].direction;
-    }
+    stickBranchToParent();
+    stickLeafToBranch();
 }
 
 void Scene::render(sf::RenderTarget *target)
@@ -41,6 +39,8 @@ void Scene::branch(sf::Vector2f base, float length, float angle, float parent_an
     sf::Vector2f direction = sf::Vector2f(Math::_cos(parent_angle + angle), Math::_sin(parent_angle + angle)) * length;
     direction = base + direction;
     Line root = Line(base, direction, direction, parent_index);
+    root.mass = length;
+
     branches.push_back(root);
     int parent_index_ = branches.size() - 1;
 
@@ -58,6 +58,7 @@ void Scene::branch(sf::Vector2f base, float length, float angle, float parent_an
 
     Circle leaf = Circle(1.f, root.direction);
     leaf.property.setFillColor(sf::Color::Green);
+    leaf.branch_index = parent_index_;
     leafs.push_back(leaf);
 }
 
@@ -75,4 +76,20 @@ int Scene::randomNumberBranch()
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(1, 4);
     return dis(gen);
+}
+
+void Scene::stickBranchToParent()
+{
+    for (int i = 1; i < branches.size() - 1; i++)
+    {
+        branches[i].base = branches[branches[i].parent_index].direction;
+    }
+}
+
+void Scene::stickLeafToBranch()
+{
+    for (Circle &l : this->leafs)
+    {
+        l.property.setPosition(branches[l.branch_index].direction);
+    }
 }

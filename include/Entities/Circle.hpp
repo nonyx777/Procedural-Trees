@@ -8,6 +8,7 @@ class Circle : public GameObject, public Rigidbody, public Entity
 {
 public:
     sf::CircleShape property;
+    uint branch_index;
 
 private:
     void initVariables();
