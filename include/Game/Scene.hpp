@@ -15,6 +15,7 @@ private:
     std::vector<std::vector<Box>> grid;
     std::vector<Line> branches;
     std::vector<Circle> leafs;
+    sf::Vector2f root_base = sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height);
 
 private:
     Scene();
@@ -27,8 +28,8 @@ public:
 
     static Scene *getInstance();
 
-    //tree
-    void branch(sf::Vector2f base, float length, float angle, float parent_angle);
+    // tree
+    void branch(sf::Vector2f base, float length, float angle, float parent_angle, int parent_index);
     int randomAngle();
     int randomNumberBranch();
 

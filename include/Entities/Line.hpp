@@ -10,9 +10,12 @@ class Line : public GameObject, public Rigidbody, public Entity
 public:
     sf::Vector2f base;
     sf::Vector2f direction;
+    sf::Vector2f rest_position;
+    int parent_index;
 
     Line();
     Line(sf::Vector2f base, sf::Vector2f direction);
+    Line(sf::Vector2f base, sf::Vector2f direction, sf::Vector2f rest_position, int parent_index);
 
     void calcMomentOfInertia() override;
     void update(float dt) override;
