@@ -10,10 +10,11 @@ Line::Line(sf::Vector2f base, sf::Vector2f direction)
     this->base = base;
     this->direction = direction;
 }
-Line::Line(sf::Vector2f base, sf::Vector2f direction, sf::Vector2f rest_position, int parent_index)
+Line::Line(sf::Vector2f base, sf::Vector2f direction, float rest_length, sf::Vector2f rest_position, int parent_index)
 {
     this->base = base;
     this->direction = direction;
+    this->rest_length = rest_length;
     this->rest_position = rest_position;
     this->parent_index = parent_index;
 }

@@ -4,7 +4,10 @@ Scene *Scene::instance = nullptr;
 
 Scene::Scene()
 {
-    branch(root_base, 100.f, 30.f, -120.f, -1);
+    branch(root_base, 80.f, 30.f, -120.f, -1);
+
+    windBox.property.setFillColor(sf::Color::Transparent);
+    windBox.property.setOutlineThickness(1.f);
 }
 
 Scene::~Scene()
@@ -22,8 +25,19 @@ Scene *Scene::getInstance()
 
 void Scene::update(float dt)
 {
+    wind_mov = sf::Vector2f(amplitude * Math::_cos(wind_count * frequency), amplitude * Math::_sin(wind_count * frequency)) + sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height / 1.5f);
+    windBox.property.setPosition(wind_mov);
+
     stickBranchToParent();
     stickLeafToBranch();
+
+    for(Line &b : branches)
+        solve(b);
+
+    if (wind_count < 360.f)
+        wind_count++;
+    else
+        wind_count = 0.f;
 }
 
 void Scene::render(sf::RenderTarget *target)
@@ -32,13 +46,16 @@ void Scene::render(sf::RenderTarget *target)
         b.render(target);
     for (Circle &l : leafs)
         l.render(target);
+
+    // windBox.render(target);
 }
 
 void Scene::branch(sf::Vector2f base, float length, float angle, float parent_angle, int parent_index)
 {
     sf::Vector2f direction = sf::Vector2f(Math::_cos(parent_angle + angle), Math::_sin(parent_angle + angle)) * length;
     direction = base + direction;
-    Line root = Line(base, direction, direction, parent_index);
+    float rest_length_tempo = Math::_length(direction - base);
+    Line root = Line(base, direction, rest_length_tempo, direction, parent_index);
     root.mass = length;
 
     branches.push_back(root);
@@ -85,6 +102,8 @@ void Scene::stickBranchToParent()
 {
     for (int i = 1; i < branches.size() - 1; i++)
     {
+        if (collision._boxPointCollide(windBox, branches[i].base))
+            branches[i].direction += sf::Vector2f(2.f, 0.1f) / branches[i].mass;
         branches[i].base = branches[branches[i].parent_index].direction;
     }
 }
@@ -95,4 +114,18 @@ void Scene::stickLeafToBranch()
     {
         l.property.setPosition(branches[l.branch_index].direction);
     }
+}
+
+void Scene::solve(Line &branch)
+{
+    sf::Vector2f displace = branch.direction - branch.base;
+    float distance = Math::_length(displace);
+
+    sf::Vector2f unit = Math::_normalize(displace);
+
+    sf::Vector2f force = (stiffness * (distance - branch.rest_length)) * unit;
+
+    branch.direction += -force;
+    sf::Vector2f vel = branch.rest_position - branch.direction;
+    branch.direction += vel * 0.05f;
 }
