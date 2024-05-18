@@ -56,10 +56,13 @@ void Scene::branch(sf::Vector2f base, float length, float angle, float parent_an
         branch(root.direction, length, -angle, parent_angle, parent_index_);
     }
 
-    Circle leaf = Circle(1.f, root.direction);
-    leaf.property.setFillColor(sf::Color::Green);
-    leaf.branch_index = parent_index_;
-    leafs.push_back(leaf);
+    else
+    {
+        Circle leaf = Circle(1.f, root.direction);
+        leaf.property.setFillColor(sf::Color::Green);
+        leaf.branch_index = parent_index_;
+        leafs.push_back(leaf);
+    }
 }
 
 int Scene::randomAngle()
