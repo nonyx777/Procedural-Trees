@@ -19,8 +19,10 @@ private:
     sf::Vector2f root_base = sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height);
 
     //wind related
-    Box windBox = Box(sf::Vector2f(250.f, 150.f), sf::Vector2f(GLOBAL::window_width/2.f, GLOBAL::window_height / 1.5f));
-    sf::Vector2f wind_mov; //area which the wind covers(position)
+    Box cwWindBox = Box(sf::Vector2f(250.f, 150.f), sf::Vector2f(GLOBAL::window_width/2.f, GLOBAL::window_height / 1.5f));
+    Box acwWindBox = Box(sf::Vector2f(250.f, 150.f), sf::Vector2f(GLOBAL::window_width/2.f, GLOBAL::window_height / 1.5f));
+    sf::Vector2f cw_wind_move; //area which the wind covers(position) the clockwise
+    sf::Vector2f acw_wind_move;//"          "           "           "    anti-clickwise
     float wind_count = 0.f; //angle 0 -> 360
     float amplitude = 100.f;
     float frequency = 5.f;

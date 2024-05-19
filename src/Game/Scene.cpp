@@ -4,10 +4,12 @@ Scene *Scene::instance = nullptr;
 
 Scene::Scene()
 {
-    branch(root_base, 80.f, 30.f, -120.f, -1);
+    branch(root_base, 60.f, 30.f, -120.f, -1);
 
-    windBox.property.setFillColor(sf::Color::Transparent);
-    windBox.property.setOutlineThickness(1.f);
+    cwWindBox.property.setFillColor(sf::Color::Transparent);
+    cwWindBox.property.setOutlineThickness(1.f);
+    acwWindBox.property.setFillColor(sf::Color::Transparent);
+    acwWindBox.property.setOutlineThickness(1.f);
 }
 
 Scene::~Scene()
@@ -25,13 +27,15 @@ Scene *Scene::getInstance()
 
 void Scene::update(float dt)
 {
-    wind_mov = sf::Vector2f(amplitude * Math::_cos(wind_count * frequency), amplitude * Math::_sin(wind_count * frequency)) + sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height / 1.5f);
-    windBox.property.setPosition(wind_mov);
+    cw_wind_move = sf::Vector2f(amplitude * Math::_cos(wind_count * frequency * 0.5f), amplitude * Math::_sin(wind_count * frequency * 0.5f)) + sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height / 1.5f);
+    acw_wind_move = sf::Vector2f(amplitude * Math::_cos(-wind_count * frequency * 0.3f), amplitude * Math::_sin(-wind_count * frequency * 0.3f)) + sf::Vector2f(GLOBAL::window_width / 2.f, GLOBAL::window_height / 1.5f);
+    cwWindBox.property.setPosition(cw_wind_move);
+    acwWindBox.property.setPosition(acw_wind_move);
 
     stickBranchToParent();
     stickLeafToBranch();
 
-    for(Line &b : branches)
+    for (Line &b : branches)
         solve(b);
 
     if (wind_count < 360.f)
@@ -47,7 +51,8 @@ void Scene::render(sf::RenderTarget *target)
     for (Circle &l : leafs)
         l.render(target);
 
-    // windBox.render(target);
+    // cwWindBox.render(target);
+    // acwWindBox.render(target);
 }
 
 void Scene::branch(sf::Vector2f base, float length, float angle, float parent_angle, int parent_index)
@@ -102,8 +107,11 @@ void Scene::stickBranchToParent()
 {
     for (int i = 1; i < branches.size() - 1; i++)
     {
-        if (collision._boxPointCollide(windBox, branches[i].base))
+        if (collision._boxPointCollide(cwWindBox, branches[i].base))
             branches[i].direction += sf::Vector2f(2.f, 0.1f) / branches[i].mass;
+        if (collision._boxPointCollide(acwWindBox, branches[i].base))
+            branches[i].direction += sf::Vector2f(-1.f, 0.1f) / branches[i].mass;
+
         branches[i].base = branches[branches[i].parent_index].direction;
     }
 }
